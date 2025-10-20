@@ -1,0 +1,1 @@
+pub const REG_COUNT: u8 = 255;
