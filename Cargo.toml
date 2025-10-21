@@ -5,4 +5,5 @@ edition = "2024"
 
 [dependencies]
 byteorder = "1.5.0"
+colored = "3.0.0"
 once_cell = "1.21.3"

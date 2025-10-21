@@ -11,7 +11,7 @@ pub struct Vm<'ins> {
 
     return_address_stack: Vec<usize>,
 
-    reg: [i64; REG_COUNT as usize]
+    pub reg: [i64; REG_COUNT as usize]
 }
 
 impl<'ins> Vm<'ins> {
@@ -60,11 +60,42 @@ impl<'ins> Vm<'ins> {
                 self.reg[r0] += imm;
             }
 
-            OpCode::PrintReg => {
+            OpCode::SUBI => {
                 // reg_index
                 let r0 = op.operands[0] as usize;
 
-                println!("REG{r0}: {}", self.reg[r0]);
+                let imm = read_i64(&op.operands[1..]);
+
+                self.reg[r0] -= imm;
+            }
+
+            OpCode::MULI => {
+                // reg_index
+                let r0 = op.operands[0] as usize;
+
+                let imm = read_i64(&op.operands[1..]);
+
+                self.reg[r0] *= imm;
+            }
+
+            OpCode::DIVI => {
+                // reg_index
+                let r0 = op.operands[0] as usize;
+
+                let imm = read_i64(&op.operands[1..]);
+
+                if imm == 0 {
+                    return Err(VmError::new("division by zero"))
+                } 
+
+                self.reg[r0] /= imm;
+            }
+
+            OpCode::PrintReg => {
+                // reg_index
+                let reg = op.operands[0] as usize;
+
+                println!("REG{reg}: {}", self.reg[reg]);
             }
 
             _ => todo!()

@@ -78,8 +78,11 @@ pub static CODEDEF_MAP: Lazy<HashMap<OpCode, CodeDef>> = Lazy::new(|| {
     let mut m = HashMap::new();
 
     m.insert(OpCode::MOVRI, create_def("movri", &[1, 8]));
-    m.insert(OpCode::MOVRR, create_def("movrr", &[1, 8]));
+    m.insert(OpCode::MOVRR, create_def("movrr", &[1, 1]));
     m.insert(OpCode::ADDI, create_def("addi", &[1, 8]));
+    m.insert(OpCode::SUBI, create_def("subi", &[1, 8]));
+    m.insert(OpCode::MULI, create_def("muli", &[1, 8]));
+    m.insert(OpCode::DIVI, create_def("divi", &[1, 8]));
     m.insert(OpCode::PrintReg, create_def("printreg", &[1]));
 
     m
