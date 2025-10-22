@@ -77,13 +77,17 @@ pub fn create_def(name: &'static str, operand_widths: &'static [i32]) -> CodeDef
 pub static CODEDEF_MAP: Lazy<HashMap<OpCode, CodeDef>> = Lazy::new(|| {
     let mut m = HashMap::new();
 
-    m.insert(OpCode::MOVRI, create_def("movri", &[1, 8]));
-    m.insert(OpCode::MOVRR, create_def("movrr", &[1, 1]));
-    m.insert(OpCode::ADDI, create_def("addi", &[1, 8]));
-    m.insert(OpCode::SUBI, create_def("subi", &[1, 8]));
-    m.insert(OpCode::MULI, create_def("muli", &[1, 8]));
-    m.insert(OpCode::DIVI, create_def("divi", &[1, 8]));
-    m.insert(OpCode::PrintReg, create_def("printreg", &[1]));
+    m.insert(OpCode::MOVRI, create_def("MOVRI", &[1, 8]));
+    m.insert(OpCode::MOVRR, create_def("MOVRR", &[1, 1]));
+    m.insert(OpCode::ADDR, create_def("ADDR", &[1, 1]));
+    m.insert(OpCode::SUBR, create_def("SUBR", &[1, 1]));
+    m.insert(OpCode::MULR, create_def("MULR", &[1, 1]));
+    m.insert(OpCode::DIVR, create_def("DIVR", &[1, 1]));
+    m.insert(OpCode::ADDI, create_def("ADDI", &[1, 8]));
+    m.insert(OpCode::SUBI, create_def("SUBI", &[1, 8]));
+    m.insert(OpCode::MULI, create_def("MULI", &[1, 8]));
+    m.insert(OpCode::DIVI, create_def("DIVI", &[1, 8]));
+    m.insert(OpCode::PrintReg, create_def("PrintReg", &[1]));
 
     m
 });
