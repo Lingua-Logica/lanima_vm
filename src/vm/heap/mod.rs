@@ -1,3 +1,4 @@
+pub mod str_val;
 use std::{cell::RefCell, rc::Rc};
 
 use crate::vm::heap::heap_object::HeapObject;
