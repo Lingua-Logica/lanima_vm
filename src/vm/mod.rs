@@ -1,3 +1,4 @@
+pub mod heap;
 pub mod code;
 pub mod utils;
 pub mod err;
