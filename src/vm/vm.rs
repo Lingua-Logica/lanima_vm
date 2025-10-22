@@ -91,6 +91,46 @@ impl<'ins> Vm<'ins> {
                 self.reg[r0] /= imm;
             }
 
+            OpCode::ADDR => {
+                // reg_index
+                let r0 = op.operands[0] as usize;
+
+                let r1 = op.operands[1] as usize;
+
+                self.reg[r0] += self.reg[r1];
+            }
+
+            OpCode::SUBR => {
+                // reg_index
+                let r0 = op.operands[0] as usize;
+
+                let r1 = op.operands[1] as usize;
+
+                self.reg[r0] -= self.reg[r1];
+            }
+
+            OpCode::MULR => {
+                // reg_index
+                let r0 = op.operands[0] as usize;
+
+                let r1 = op.operands[1] as usize;
+
+                self.reg[r0] *= self.reg[r1];
+            }
+
+            OpCode::DIVR => {
+                // reg_index
+                let r0 = op.operands[0] as usize;
+
+                let r1 = op.operands[1] as usize;
+
+                if self.reg[r1] == 0 {
+                    return Err(VmError::new("division by zero"))
+                }
+
+                self.reg[r0] /= self.reg[r1];
+            }
+
             OpCode::PrintReg => {
                 // reg_index
                 let reg = op.operands[0] as usize;
