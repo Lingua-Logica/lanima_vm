@@ -1,26 +1,31 @@
-use std::rc::Rc;
+use enum_dispatch::enum_dispatch;
 
-use crate::vm::heap::str_val::StrVal;
+use crate::object::{object_trait::{Addable, Inspect, IntoOption}, str_val::StrVal};
 
-pub trait Inspect {
-    fn inspect(&self) -> Box<str>;
-}
-
+#[enum_dispatch(IObject, Inspect, IntoOption<Addable>)]
 #[derive(Debug, Clone)]
 pub enum HeapVal {
-    Str(StrVal),
+    StrVal,
+}
+
+macro_rules! auto_impl {
+    ($self:ident, $method:ident) => {
+        match $self {
+            HeapVal::StrVal(it) => it.$method(),
+        }
+    };
 }
 
 impl Inspect for HeapVal {
     fn inspect(&self) -> Box<str> {
-        match self {
-            HeapVal::Str(s) => s.clone().into()
-        }
+        auto_impl!(self, inspect)
     }
 }
 
-pub enum Addable {
-    Str(StrVal)
+impl IntoOption<Addable> for HeapVal {
+    fn into_option(self) -> Option<Addable> {
+        auto_impl!(self, into_option)
+    }
 }
 
 #[derive(Debug, Clone)]
