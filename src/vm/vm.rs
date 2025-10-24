@@ -1,23 +1,28 @@
-use crate::vm::{constants::REG_COUNT, err::VmError, code::op_code::{Op, OpCode}, utils::read_i64};
+use crate::{
+    err::vm_err::VmError,
+    vm::{
+        code::op_code::{Op, OpCode},
+        constants::REG_COUNT,
+        utils::read_i64,
+    },
+};
 
 pub type VmResult<T> = Result<T, VmError>;
 
 pub struct Vm<'ins> {
     program: &'ins [Op],
     pc: usize, // program counter
-    
+
     stack: Vec<usize>,
     sp: usize,
 
     return_address_stack: Vec<usize>,
 
-    pub reg: [i64; REG_COUNT as usize]
+    pub reg: [i64; REG_COUNT as usize],
 }
 
 impl<'ins> Vm<'ins> {
-    pub fn new(
-        program: &'ins [Op]
-    ) -> Vm<'ins> {
+    pub fn new(program: &'ins [Op]) -> Vm<'ins> {
         Vm {
             program,
             pc: 0,
@@ -27,7 +32,7 @@ impl<'ins> Vm<'ins> {
 
             return_address_stack: vec![],
 
-            reg: [0; REG_COUNT as usize]
+            reg: [0; REG_COUNT as usize],
         }
     }
 
@@ -46,7 +51,6 @@ impl<'ins> Vm<'ins> {
                 // reg_index
                 let r0 = op.operands[0] as usize;
                 let r1 = op.operands[1] as usize;
-
 
                 self.reg[r0] = self.reg[r1];
             }
@@ -85,8 +89,8 @@ impl<'ins> Vm<'ins> {
                 let imm = read_i64(&op.operands[1..]);
 
                 if imm == 0 {
-                    return Err(VmError::new("division by zero"))
-                } 
+                    return Err(VmError::new("division by zero"));
+                }
 
                 self.reg[r0] /= imm;
             }
@@ -125,7 +129,7 @@ impl<'ins> Vm<'ins> {
                 let r1 = op.operands[1] as usize;
 
                 if self.reg[r1] == 0 {
-                    return Err(VmError::new("division by zero"))
+                    return Err(VmError::new("division by zero"));
                 }
 
                 self.reg[r0] /= self.reg[r1];
@@ -138,12 +142,12 @@ impl<'ins> Vm<'ins> {
                 println!("REG{reg}: {}", self.reg[reg]);
             }
 
-            _ => todo!()
+            _ => todo!(),
         }
 
         Ok(())
     }
-    
+
     pub fn run(&mut self) -> VmResult<()> {
         while self.pc < self.program.len() {
             self.next(&self.program[self.pc])?;

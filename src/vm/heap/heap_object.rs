@@ -27,9 +27,3 @@ impl IntoOption<Addable> for HeapVal {
         auto_impl!(self, into_option)
     }
 }
-
-#[derive(Debug, Clone)]
-pub struct HeapObject {
-    val: HeapVal,
-    add_func: Option<fn(Addable, Addable) -> HeapObject>,
-}
