@@ -10,11 +10,7 @@ mod tests {
         vm::Vm,
     };
 
-    fn expected_reg(
-        code: &[Op],
-        expected_reg_index: usize,
-        expected_reg_value: i64
-    ) {
+    fn expected_reg(code: &[Op], expected_reg_index: usize, expected_reg_value: i64) {
         let mut vm = Vm::new(code);
 
         if let Err(err) = vm.run() {
@@ -24,7 +20,10 @@ mod tests {
         let reg = vm.reg[expected_reg_index];
 
         assert_eq!(reg, expected_reg_value);
-        println!("{}", format!("REG{expected_reg_index} ({reg}) == {expected_reg_value}").green());
+        println!(
+            "{}",
+            format!("REG{expected_reg_index} ({reg}) == {expected_reg_value}").green()
+        );
     }
 
     #[test]
@@ -35,10 +34,7 @@ mod tests {
             make(OpCode::ADDR, &vec![1, 0]),
         ];
 
-        let expected = [
-            (0, 91),
-            (1, 91),
-        ];
+        let expected = [(0, 91), (1, 91)];
 
         for (reg, expected_value) in expected {
             expected_reg(code, reg, expected_value);
@@ -53,10 +49,7 @@ mod tests {
             make(OpCode::SUBR, &vec![1, 0]),
         ];
 
-        let expected = [
-            (0, -4),
-            (1, 4),
-        ];
+        let expected = [(0, -4), (1, 4)];
 
         for (reg, expected_value) in expected {
             expected_reg(code, reg, expected_value);
@@ -71,11 +64,8 @@ mod tests {
             make(OpCode::MOVRI, &vec![1, 10]),
             make(OpCode::MULR, &vec![1, 0]),
         ];
-        
-        let expected = [
-            (0, 9),
-            (1, 90),
-        ];
+
+        let expected = [(0, 9), (1, 90)];
 
         for (reg, expected_value) in expected {
             expected_reg(code, reg, expected_value);
@@ -91,10 +81,7 @@ mod tests {
             make(OpCode::DIVR, &vec![1, 0]),
         ];
 
-        let expected = [
-            (0, 1),
-            (1, 3),
-        ];
+        let expected = [(0, 1), (1, 3)];
 
         for (reg, expected_value) in expected {
             expected_reg(code, reg, expected_value);
@@ -113,11 +100,62 @@ mod tests {
 
     #[test]
     fn test_movri() {
-        let code = &[
-            make(OpCode::MOVRI, &vec![0, 91]),
-        ];
+        let code = &[make(OpCode::MOVRI, &vec![0, 91])];
 
         expected_reg(code, 0, 91);
+    }
+
+    #[test]
+    fn test_new_str() {
+        let code = &[make(OpCode::NEWSTR, &{
+            let mut v = vec![0i64];
+            v.append(
+                &mut "a"
+                    .as_bytes()
+                    .iter()
+                    .map(|it| *it as i64)
+                    .collect::<Vec<i64>>(),
+            );
+
+            v
+        })];
+
+        let expected = [
+            // r0, heap_index 0
+            (0, 0),
+        ];
+
+        for (reg, expected_value) in expected {
+            expected_reg(code, reg, expected_value);
+        }
+    }
+
+    #[test]
+    fn test_vm_call() {
+        let code = &[
+            make(OpCode::NEWSTR, &{
+                let mut v = vec![0i64];
+                v.append(
+                    &mut "Hello, World"
+                        .as_bytes()
+                        .iter()
+                        .map(|it| *it as i64)
+                        .collect::<Vec<i64>>(),
+                );
+
+                v
+            }),
+            make(OpCode::VMCALL, &vec![0]),
+        ];
+
+        let expected = [
+            // r0, heap_index 0
+            (0, 0),
+        ];
+
+        for (reg, expected_value) in expected {
+            expected_reg(code, reg, expected_value);
+        }
     }
 
     #[test]

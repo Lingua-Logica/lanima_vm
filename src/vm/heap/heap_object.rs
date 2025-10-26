@@ -1,5 +1,6 @@
 use enum_dispatch::enum_dispatch;
 
+use crate::object::object_trait::IObject;
 use crate::object::{object_trait::{Addable, Inspect, IntoOption}, str_val::StrVal};
 
 #[enum_dispatch(IObject, Inspect, IntoOption<Addable>)]

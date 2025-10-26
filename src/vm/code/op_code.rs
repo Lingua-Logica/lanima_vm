@@ -1,8 +1,9 @@
 use std::{collections::HashMap, rc::Rc};
 
+use bincode::{Decode, Encode};
 use once_cell::sync::Lazy;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Encode, Decode)]
 #[repr(u8)]
 pub enum OpCode {
     MOVRR,
@@ -45,20 +46,15 @@ pub enum OpCode {
     BGE,
 }
 
-#[derive(Clone, Debug, PartialEq, PartialOrd, Ord, Eq, Hash)]
+#[derive(Clone, Debug, PartialEq, PartialOrd, Ord, Eq, Hash, Decode, Encode)]
 pub struct Op {
     pub op: OpCode,
-    pub operands: Rc<[u8]>
+    pub operands: Rc<[u8]>,
 }
 
 impl Op {
-    pub fn new(
-        op: OpCode,
-        operands: Rc<[u8]>
-    ) -> Op {
-        Op {
-            op, operands
-        }
+    pub fn new(op: OpCode, operands: Rc<[u8]>) -> Op {
+        Op { op, operands }
     }
 }
 
@@ -66,11 +62,25 @@ impl Op {
 pub struct CodeDef {
     pub name: &'static str,
     pub operand_widths: &'static [i32],
+    pub infinite_operands: bool,
 }
 
-pub fn create_def(name: &'static str, operand_widths: &'static [i32]) -> CodeDef {
+pub const fn create_def(name: &'static str, operand_widths: &'static [i32]) -> CodeDef {
     CodeDef {
-        name, operand_widths
+        name,
+        operand_widths,
+        infinite_operands: false,
+    }
+}
+
+pub const fn create_def_infinite_operands(
+    name: &'static str,
+    operand_widths: &'static [i32],
+) -> CodeDef {
+    CodeDef {
+        name,
+        operand_widths,
+        infinite_operands: true,
     }
 }
 
@@ -87,6 +97,8 @@ pub static CODEDEF_MAP: Lazy<HashMap<OpCode, CodeDef>> = Lazy::new(|| {
     m.insert(OpCode::SUBI, create_def("SUBI", &[1, 8]));
     m.insert(OpCode::MULI, create_def("MULI", &[1, 8]));
     m.insert(OpCode::DIVI, create_def("DIVI", &[1, 8]));
+    m.insert(OpCode::NEWSTR, create_def_infinite_operands("NEWSTR", &[1, 4]));
+    m.insert(OpCode::VMCALL, create_def_infinite_operands("VMCALL", &[1]));
     m.insert(OpCode::PrintReg, create_def("PrintReg", &[1]));
 
     m
